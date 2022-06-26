@@ -1,0 +1,6 @@
+#+TITLE: Adobe PDF Embed wrapper for JustPy
+
+Base libs:
+
+- [[https://developer.adobe.com/document-services/apis/pdf-embed/][Adobe PDF Embed API]]
+- [[https://justpy.io][JustPy]]
