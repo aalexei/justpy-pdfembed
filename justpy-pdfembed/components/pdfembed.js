@@ -7,30 +7,39 @@ Vue.component('jppdfembed', {
     data: function () {
         return {
             adobeApiReady: false,
-            previewFilePromise: null
+            previewFilePromise: null,
+            adobeDCView: null
         }
     },
     methods: {
+        registerView() {
+            this.adobeDCView = new AdobeDC.View({
+                clientId: "31f06deb7bdf42ddb058dfc36613230b",
+                divId: "1"
+            });
+
+            comp_dict[this.$props.jp_props.id] = this.adobeDCView;
+        },
         renderPdf(url, fileName) {
-            console.log('here 1');
-            if (!this.adobeApiReady) {
-                return
-            };
-            console.log('here 2');
+            // console.log('here 1');
+            // if (!this.adobeApiReady) {
+            //     return
+            // };
+            // console.log('here 2');
             const previewConfig = {
                 defaultViewMode: 'FIT_WIDTH',
                 showAnnotationTools: false
             }
-            adobeDCView = new AdobeDC.View({
-                clientId: "31f06deb7bdf42ddb058dfc36613230b",
-                divId: "1"
-            })
+            // adobeDCView = new AdobeDC.View({
+            //     clientId: "31f06deb7bdf42ddb058dfc36613230b",
+            //     divId: "1"
+            // })
 
             // Register component
-            comp_dict[this.$props.jp_props.id] = adobeDCView;
+            // comp_dict[this.$props.jp_props.id] = adobeDCView;
             //comp_dict[1] = adobeDCView;
 
-            this.previewFilePromise = adobeDCView.previewFile({
+            this.previewFilePromise = this.adobeDCView.previewFile({
                 content: {
                     location: {url: url}
                 },
@@ -65,6 +74,7 @@ Vue.component('jppdfembed', {
 
             // Register component
             //comp_dict[this.$props.jp_props.id] = dc_view;
+            comp_dict[this.$props.jp_props.id] = this;
 
         }
     },
@@ -72,23 +82,26 @@ Vue.component('jppdfembed', {
         if (window.AdobeDC) {
             console.log('AdobeDC ready', this);
             this.adobeApiReady = true;
-            comp_dict[this.$props.jp_props.id] = this;
+            this.registerView();
+            // comp_dict[this.$props.jp_props.id] = this;
         } else {
             console.log('AdobeDC not ready', this);
             document.addEventListener('adobe_dc_view_sdk.ready', () => {
                 this.adobeApiReady = true;
-                comp_dict[this.$props.jp_props.id] = this;
+                this.registerView();
+                //comp_dict[this.$props.jp_props.id] = this;
             })
         };
         // document.addEventListener('adobe_dc_view_sdk.ready', () => {
         //     this.adobeApiReady = true
         // })
-        var dc_view;
-        var adobeDCView;
-        this.pdfembed_create();
+        // var dc_view;
+        // var adobeDCView;
+        // this.pdfembed_create();
     },
     updated() {
-        //this.pdfembed_create();
+        comp_dict[this.$props.jp_props.id] = this;
+        // this.pdfembed_create();
     },
     props: {
         jp_props: Object
