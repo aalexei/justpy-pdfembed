@@ -31,12 +31,17 @@ Vue.component('jppdfembed', {
             });
 
             const previewConfig = {
-                defaultViewMode: 'FIT_WIDTH',
+                defaultViewMode: jp_props.defaultViewMode,
                 showAnnotationTools: jp_props.showAnnotationTools,
                 embedMode: jp_props.embedMode,
                 focusOnRendering: jp_props.focusOnRendering,
                 showDownloadPDF: jp_props.showDownloadPDF,
                 showPrintPDF: jp_props.showPrintPDF,
+                showPageControls: jp_props.showPageControls,
+                dockPageControls: jp_props.dockPageControls,
+                showLeftHandPanel: jp_props.showLeftHandPanel,
+                showDownloadPDF: jp_props.showDownloadPDF,
+                showPrintPDF: jp_props.showDownloadPDF,
             }
 
             // Register component
@@ -55,6 +60,28 @@ Vue.component('jppdfembed', {
                     apis.getCurrentPage()
                         .then(currentPage => apis.gotoLocation(currentPage + 1))
                         .catch(error => console.error(error))
+                })
+            })
+        },
+        previousPage() {
+            this.previewFilePromise.then(adobeViewer => {
+                adobeViewer.getAPIs().then(apis => {
+                    apis.getCurrentPage()
+                        .then(currentPage => {
+                            if (currentPage > 1) {
+                                return apis.gotoLocation(currentPage - 1)
+                            }
+                        })
+                        .catch(error => console.error(error))
+                })
+            })
+        },
+        gotoLocation(page, x, y) {
+            this.previewFilePromise.then(adobeViewer => {
+                adobeViewer.getAPIs().then(apis => {
+                    apis.gotoLocation(page, x, y)
+                        .then(() => console.log("Success"))
+                        .catch(error => console.log(error));
                 })
             })
         },
