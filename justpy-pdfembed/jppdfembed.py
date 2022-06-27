@@ -12,6 +12,11 @@ class Pdfembed(jp.JustpyBaseComponent):
         self.classes = ''
         self.style = ''
         self.client_id = ''
+        self.embedMode = ""
+        self.showAnnotationTools = False
+        self.focusOnRendering = True
+        self.showDownloadPDF = False
+        self.showPrintPDF = False
         self.clear = False
         self.show = True
         self.event_propagation = True
@@ -64,6 +69,11 @@ class Pdfembed(jp.JustpyBaseComponent):
         d['classes'] = self.classes
         d['style'] = self.style
         d['client_id'] = self.client_id
+        d['showAnnotationTools'] = self.showAnnotationTools
+        d['embedMode'] = self.embedMode
+        d['focusOnRendering'] = self.focusOnRendering
+        d['showDownloadPDF'] = self.showDownloadPDF
+        d['showPrintPDF'] = self.showPrintPDF
         d['event_propagation'] = self.event_propagation
         d['def'] = self.options
         d['events'] = self.events

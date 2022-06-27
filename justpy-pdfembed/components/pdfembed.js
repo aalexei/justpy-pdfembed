@@ -24,19 +24,23 @@ Vue.component('jppdfembed', {
                 return
             };
 
+            jp_props = this.$props.jp_props;
             this.adobeDCView = new AdobeDC.View({
-                clientId: this.$props.jp_props.client_id,
-                divId: this.$props.jp_props.id.toString()
+                clientId: jp_props.client_id,
+                divId: jp_props.id.toString()
             });
 
             const previewConfig = {
                 defaultViewMode: 'FIT_WIDTH',
-                showAnnotationTools: false,
-                // embedMode: "SIZED_CONTAINER"
+                showAnnotationTools: jp_props.showAnnotationTools,
+                embedMode: jp_props.embedMode,
+                focusOnRendering: jp_props.focusOnRendering,
+                showDownloadPDF: jp_props.showDownloadPDF,
+                showPrintPDF: jp_props.showPrintPDF,
             }
 
             // Register component
-            comp_dict[this.$props.jp_props.id] = this;
+            comp_dict[jp_props.id] = this;
 
             this.previewFilePromise = this.adobeDCView.previewFile({
                 content: {
@@ -44,6 +48,15 @@ Vue.component('jppdfembed', {
                 },
                 metaData: {fileName: fileName, id: fileName},
                 }, previewConfig);
+        },
+        nextPage() {
+            this.previewFilePromise.then(adobeViewer => {
+                adobeViewer.getAPIs().then(apis => {
+                    apis.getCurrentPage()
+                        .then(currentPage => apis.gotoLocation(currentPage + 1))
+                        .catch(error => console.error(error))
+                })
+            })
         },
     },
     mounted() {
