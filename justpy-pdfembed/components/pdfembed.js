@@ -12,30 +12,31 @@ Vue.component('jppdfembed', {
         }
     },
     methods: {
-        registerView() {
-            this.adobeDCView = new AdobeDC.View({
-                clientId: "31f06deb7bdf42ddb058dfc36613230b",
-                divId: this.$props.jp_props.id.toString()
-            });
-        },
+        // registerView() {
+        //     this.adobeDCView = new AdobeDC.View({
+        //         clientId: "31f06deb7bdf42ddb058dfc36613230b",
+        //         divId: this.$props.jp_props.id.toString()
+        //     });
+        // },
         renderPdf(url, fileName) {
             if (!this.adobeApiReady) {
                 console.log('API not ready yet');
                 return
             };
+
+            this.adobeDCView = new AdobeDC.View({
+                clientId: this.$props.jp_props.client_id,
+                divId: this.$props.jp_props.id.toString()
+            });
+
             const previewConfig = {
                 defaultViewMode: 'FIT_WIDTH',
                 showAnnotationTools: false,
                 // embedMode: "SIZED_CONTAINER"
             }
-            // adobeDCView = new AdobeDC.View({
-            //     clientId: "31f06deb7bdf42ddb058dfc36613230b",
-            //     divId: "1"
-            // })
 
             // Register component
-            // comp_dict[this.$props.jp_props.id] = adobeDCView;
-            //comp_dict[1] = adobeDCView;
+            comp_dict[this.$props.jp_props.id] = this;
 
             this.previewFilePromise = this.adobeDCView.previewFile({
                 content: {
@@ -44,36 +45,6 @@ Vue.component('jppdfembed', {
                 metaData: {fileName: fileName, id: fileName},
                 }, previewConfig);
         },
-        // pdfembed_create() {
-            // if(window.AdobeDC) this.pdfAPIReady = true;
-            // var props = this.$props;
-
-            // document.addEventListener("adobe_dc_view_sdk.ready", function(){
-            // dc_view = new AdobeDC.View({
-            //     clientId: props.jp_props.client_id,
-            //     divId: props.jp_props.id.toString()
-            // });
-
-            // dc_view.previewFile(
-            //     {
-            //         content:{
-            //             location: {
-            //                 url: "http://127.0.0.1:8000/static/sample.pdf"}
-            //             },
-            //         metaData:{
-            //             fileName: "Sample.pdf"
-            //         }
-            //     },
-            //     {
-            //         embedMode: "SIZED_CONTAINER"
-            //     })
-            // }); // eventListener
-
-            // Register component
-            //comp_dict[this.$props.jp_props.id] = dc_view;
-        //     comp_dict[this.$props.jp_props.id] = this;
-
-        // }
     },
     mounted() {
         comp_dict[this.$props.jp_props.id] = this;
@@ -81,12 +52,12 @@ Vue.component('jppdfembed', {
         if (window.AdobeDC) {
             console.log('AdobeDC ready', this);
             this.adobeApiReady = true;
-            this.registerView();
+            // this.registerView();
         } else {
             console.log('AdobeDC not ready', this);
             document.addEventListener('adobe_dc_view_sdk.ready', () => {
                 this.adobeApiReady = true;
-                this.registerView();
+                // this.registerView();
             })
         };
     },
