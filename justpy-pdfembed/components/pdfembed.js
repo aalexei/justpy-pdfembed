@@ -15,20 +15,18 @@ Vue.component('jppdfembed', {
         registerView() {
             this.adobeDCView = new AdobeDC.View({
                 clientId: "31f06deb7bdf42ddb058dfc36613230b",
-                divId: "1"
+                divId: this.$props.jp_props.id.toString()
             });
-
-            comp_dict[this.$props.jp_props.id] = this.adobeDCView;
         },
         renderPdf(url, fileName) {
-            // console.log('here 1');
-            // if (!this.adobeApiReady) {
-            //     return
-            // };
-            // console.log('here 2');
+            if (!this.adobeApiReady) {
+                console.log('API not ready yet');
+                return
+            };
             const previewConfig = {
                 defaultViewMode: 'FIT_WIDTH',
-                showAnnotationTools: false
+                showAnnotationTools: false,
+                // embedMode: "SIZED_CONTAINER"
             }
             // adobeDCView = new AdobeDC.View({
             //     clientId: "31f06deb7bdf42ddb058dfc36613230b",
@@ -45,9 +43,8 @@ Vue.component('jppdfembed', {
                 },
                 metaData: {fileName: fileName, id: fileName},
                 }, previewConfig);
-            //Window.adobeDCView = adobeDCView;
         },
-        pdfembed_create() {
+        // pdfembed_create() {
             // if(window.AdobeDC) this.pdfAPIReady = true;
             // var props = this.$props;
 
@@ -74,34 +71,26 @@ Vue.component('jppdfembed', {
 
             // Register component
             //comp_dict[this.$props.jp_props.id] = dc_view;
-            comp_dict[this.$props.jp_props.id] = this;
+        //     comp_dict[this.$props.jp_props.id] = this;
 
-        }
+        // }
     },
     mounted() {
+        comp_dict[this.$props.jp_props.id] = this;
+
         if (window.AdobeDC) {
             console.log('AdobeDC ready', this);
             this.adobeApiReady = true;
             this.registerView();
-            // comp_dict[this.$props.jp_props.id] = this;
         } else {
             console.log('AdobeDC not ready', this);
             document.addEventListener('adobe_dc_view_sdk.ready', () => {
                 this.adobeApiReady = true;
                 this.registerView();
-                //comp_dict[this.$props.jp_props.id] = this;
             })
         };
-        // document.addEventListener('adobe_dc_view_sdk.ready', () => {
-        //     this.adobeApiReady = true
-        // })
-        // var dc_view;
-        // var adobeDCView;
-        // this.pdfembed_create();
     },
     updated() {
-        comp_dict[this.$props.jp_props.id] = this;
-        // this.pdfembed_create();
     },
     props: {
         jp_props: Object
