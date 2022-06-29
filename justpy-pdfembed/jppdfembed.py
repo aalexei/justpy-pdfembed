@@ -70,6 +70,9 @@ class Pdfembed(jp.JustpyBaseComponent):
             fut.set_result(msg.result.copy())
         return True
 
+    async def gotoLocation(self, ws, page, x=0, y=0):
+        await self.run_method(f'gotoLocation({page},{x},{y})', ws)
+
     def convert_object_to_dict(self):
         d = {}
         d['vue_type'] = self.vue_type
