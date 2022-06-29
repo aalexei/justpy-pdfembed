@@ -23,6 +23,9 @@ class Pdfembed(jp.JustpyBaseComponent):
         self.showLeftHandPanel = True
         self.showDownloadPDF = True
         self.showPrintPDF = True
+        self.autoSaveFrequency = 0
+        self.enableFocusPolling = False
+        self.showSaveButton = True
         self.clear = False
         self.show = True
         self.event_propagation = True
@@ -86,6 +89,9 @@ class Pdfembed(jp.JustpyBaseComponent):
         d['showLeftHandPanel'] = self.showLeftHandPanel
         d['showDownloadPDF'] = self.showDownloadPDF
         d['showPrintPDF'] = self.showPrintPDF
+        d['autoSaveFrequency'] = self.autoSaveFrequency
+        d['enableFocusPolling'] = self.enableFocusPolling
+        d['showSaveButton'] = self.showSaveButton
         d['event_propagation'] = self.event_propagation
         d['def'] = self.options
         d['events'] = self.events

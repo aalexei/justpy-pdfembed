@@ -47,9 +47,9 @@ Vue.component('jppdfembed', {
 
             /* Options to control save behavior */
             const saveOptions = {
-                autoSaveFrequency: 0,      // <Number, default=0>,
-                enableFocusPolling: false, // <Boolean, default=false>,
-                showSaveButton: true,      // <Boolean, default=true>
+                autoSaveFrequency: jp_props.autoSaveFrequency,
+                enableFocusPolling: jp_props.enableFocusPolling,
+                showSaveButton: jp_props.showSaveButton,
             }
 
             /* Register save callback */
