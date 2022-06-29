@@ -22,13 +22,16 @@ Vue.component('jppdfembed', {
             if (!this.adobeApiReady) {
                 console.log('API not ready yet');
                 return
-            };
+            }
 
             jp_props = this.$props.jp_props;
             this.adobeDCView = new AdobeDC.View({
                 clientId: jp_props.client_id,
                 divId: jp_props.id.toString()
             });
+
+            // Register component
+            comp_dict[jp_props.id] = this;
 
             const previewConfig = {
                 defaultViewMode: jp_props.defaultViewMode,
@@ -44,15 +47,58 @@ Vue.component('jppdfembed', {
                 showPrintPDF: jp_props.showDownloadPDF,
             }
 
-            // Register component
-            comp_dict[jp_props.id] = this;
-
             this.previewFilePromise = this.adobeDCView.previewFile({
                 content: {
                     location: {url: url}
                 },
                 metaData: {fileName: fileName, id: fileName},
-                }, previewConfig);
+            }, previewConfig);
+
+            /* Options to control save behavior */
+            const saveOptions = {
+                autoSaveFrequency: 0,      // <Number, default=0>,
+                enableFocusPolling: false, // <Boolean, default=false>,
+                showSaveButton: true,      // <Boolean, default=true>
+            }
+
+            /* Register save callback */
+            this.adobeDCView.registerCallback(
+                AdobeDC.View.Enum.CallbackType.SAVE_API,
+                function(metaData, content, options) {
+                    const edata = {
+                        'event_type': 'file_save',
+                        'file_name': fileName,
+                        'file_content': btoa(String.fromCharCode.apply(null, new Uint8Array(content))),
+                        'file_metadata': metaData,
+                        'id': jp_props.id,
+                        'page_id': page_id,
+                        'websocket_id': websocket_id
+                    };
+                    send_to_server(edata, 'event');
+                    /* Save callback success case */
+                    return new Promise((resolve, reject) => {
+                        resolve({
+                            code: AdobeDC.View.Enum.ApiResponseCode.SUCCESS,
+                            data: {
+                            metaData: Object.assign(metaData, {fileName: fileName})
+                            }
+                        })
+                    })
+
+                    /* Save callback failure case */
+                    /* return new Promise((resolve, reject) => {
+                        reject({
+                            code: this.AdobeDC.View.Enum.ApiResponseCode.FAIL,
+                            data: {
+                                <Optional>
+                            }
+                        });
+                    }); */
+
+                },
+                saveOptions
+            );
+
         },
         nextPage() {
             this.previewFilePromise.then(adobeViewer => {

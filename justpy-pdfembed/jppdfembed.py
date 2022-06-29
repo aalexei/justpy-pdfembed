@@ -29,7 +29,7 @@ class Pdfembed(jp.JustpyBaseComponent):
         self.pages = {}
         kwargs['temp'] = False  # Force an id to be assigned
         super().__init__(**kwargs)
-        self.allowed_events = []
+        self.allowed_events = ['file_save']
         if type(self.options) != jp.Dict:
             self.options = jp.Dict(self.options)
         self.initialize(**kwargs)
