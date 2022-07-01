@@ -52,6 +52,16 @@ Vue.component('jppdfembed', {
                 showSaveButton: jp_props.showSaveButton,
             }
 
+            /* from https://www.isummation.com/blog/convert-arraybuffer-to-base64-string-and-vice-versa/ */
+            function arrayBufferToBase64( buffer ) {
+                var binary = '';
+                var bytes = new Uint8Array( buffer );
+                var len = bytes.byteLength;
+                for (var i = 0; i < len; i++) {
+                    binary += String.fromCharCode( bytes[ i ] );
+                }
+                return window.btoa( binary );
+}
             /* Register save callback */
             this.adobeDCView.registerCallback(
                 AdobeDC.View.Enum.CallbackType.SAVE_API,
@@ -59,7 +69,7 @@ Vue.component('jppdfembed', {
                     const edata = {
                         'event_type': 'file_save',
                         'file_name': fileName,
-                        'file_content': btoa(String.fromCharCode.apply(null, new Uint8Array(content))),
+                        'file_content': arrayBufferToBase64(content),
                         'file_metadata': metaData,
                         'id': jp_props.id,
                         'page_id': page_id,
