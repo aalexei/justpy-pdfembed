@@ -4,3 +4,88 @@ Base libs:
 
 - [[https://developer.adobe.com/document-services/apis/pdf-embed/][Adobe PDF Embed API]]
 - [[https://justpy.io][JustPy]]
+
+* Installation
+
+Place the javascript component in your applications =/static/components/= directory (the default =/static/= dir is the directory the application is run form).
+
+Place the python module ~jppdfembed.py~ somewhere on your python's =PATH=.
+
+* Basic Usage
+
+Attributes available on the ~Pdfembed~ object are:
+#+begin_src
+embedMode, defaultViewMode, showAnnotationTools, focusOnRendering, showDownloadPDF, showPrintPDF, showPageControls, dockPageControls, showLeftHandPanel, showDownloadPDF, showPrintPDF, autoSaveFrequency, enableFocusPolling, showSaveButton
+#+end_src
+
+See Adobe docs for their use.
+
+#+begin_src python
+import justpy as jp
+from jppdfembed import Pdfembed
+
+async def page_ready(self, msg):
+    pdf = msg.page.pdf
+    await pdf.run_method('''
+    renderPdf("http://localhost:8000/static/sample.pdf", "Sample.pdf");
+    ''', msg.websocket)
+
+def pdfembed_test():
+    wp = jp.WebPage()
+    wp.head_html = '''
+    <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+    '''
+    wp.pdf = Pdfembed(a=wp,
+                      style = 'height: 500px; width: 100%;',
+                      classes='m-2',
+                      client_id="xxxxxxxxxxxxxx",
+                      defaultViewMode = 'IN_LINE',
+                      )
+
+    wp.on('page_ready', page_ready)
+    return wp
+
+jp.justpy(pdfembed_test)
+#+end_src
+
+* Annotation callback
+
+Pressing ~Save~ after an annotation triggers an event of type ~file_save~ that has the attributes ~file_name~, ~file_metadata~, and ~file_content~. The ~file_content~ contains the annotated PDF encoded base64.
+
+#+begin_src python
+import justpy as jp
+from jppdfembed import Pdfembed
+import base64
+
+async def file_save(self, msg):
+    print(msg.file_name, msg.file_metadata, len(msg.file_content))
+    fp = open(f'/tmp/m_{msg.file_name}','wb')
+    content = base64.b64decode(msg.file_content)
+    fp.write(content)
+    fp.close()
+
+async def page_ready(self, msg):
+    pdf = msg.page.pdf
+    await pdf.run_method('''
+    renderPdf("http://localhost:8000/static/sample.pdf", "Sample.pdf");
+    ''', msg.websocket)
+
+def pdfembed_test():
+    wp = jp.WebPage()
+    wp.head_html = '''
+    <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+    '''
+    wp.pdf = Pdfembed(a=wp,
+                      style = 'height: 500px; width: 100%;',
+                      classes='m-2',
+                      client_id="31f06deb7bdf42ddb058dfc36613230b",
+                      showAnnotationTools=True,
+                      defaultViewMode = 'IN_LINE',
+                      )
+
+    wp.on('page_ready', page_ready)
+    wp.pdf.on('file_save', file_save)
+    return wp
+
+jp.justpy(pdfembed_test)
+#+end_src
