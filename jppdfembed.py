@@ -29,6 +29,7 @@ class Pdfembed(jp.JustpyBaseComponent):
         self.clear = False
         self.show = True
         self.event_propagation = True
+        self.username = "Guest"
         self.pages = {}
         kwargs['temp'] = False  # Force an id to be assigned
         super().__init__(**kwargs)
@@ -96,6 +97,7 @@ class Pdfembed(jp.JustpyBaseComponent):
         d['enableFocusPolling'] = self.enableFocusPolling
         d['showSaveButton'] = self.showSaveButton
         d['event_propagation'] = self.event_propagation
+        d['username'] = self.username
         d['def'] = self.options
         d['events'] = self.events
         d['clear'] = self.clear

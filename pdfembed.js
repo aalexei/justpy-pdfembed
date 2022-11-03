@@ -99,6 +99,26 @@ Vue.component('jppdfembed', {
                 },
                 saveOptions
             );
+            /* Register profile callback */
+            this.adobeDCView.registerCallback(
+                AdobeDC.View.Enum.CallbackType.GET_USER_PROFILE_API,
+                function() {
+                    const profile = {
+                        userProfile: {
+                            name: jp_props.username,
+                            //firstName: "Ook1",
+                            //lastName: "User1",
+                            //email: ""
+                        }
+                    };
+                    return new Promise((resolve, reject) => {
+                        resolve({
+                            code: AdobeDC.View.Enum.ApiResponseCode.SUCCESS,
+                            data: profile
+                        });
+                    });
+                },
+                {});
 
         },
         nextPage() {

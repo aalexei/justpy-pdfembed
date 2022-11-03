@@ -21,7 +21,7 @@ Attributes available on the ~Pdfembed~ object are:
 embedMode, defaultViewMode, showAnnotationTools, focusOnRendering, showDownloadPDF, showPrintPDF, showPageControls, dockPageControls, showLeftHandPanel, showDownloadPDF, showPrintPDF, autoSaveFrequency, enableFocusPolling, showSaveButton
 #+end_src
 
-See Adobe docs for their use.
+See Adobe docs (https://developer.adobe.com/document-services/apis/pdf-embed/) for their use.
 
 #+begin_src python
 import justpy as jp
