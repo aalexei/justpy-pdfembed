@@ -12,7 +12,7 @@ class Pdfembed(jp.JustpyBaseComponent):
         self.classes = ''
         self.style = ''
         self.client_id = ''
-        self.embedMode = ""
+        self.embedMode = ''
         self.defaultViewMode = 'FIT_WIDTH'
         self.showAnnotationTools = False
         self.focusOnRendering = True
